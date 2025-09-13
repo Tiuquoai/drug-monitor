@@ -1,48 +1,63 @@
-<!-- add header -->
+<!-- include header -->
 <%- include('includes/_header') %>
-<!-- end header -->
+
 <!-- Main section -->
 <main id="main">
-	<a href="/add-drug">
-		<button id="new">New Drug <i class="fas fa-pills"></i></button>
-	</a>
+  <h1>Drug Management</h1>
 
-	<table>	
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Drug Name</th>
-				<th>Tablets per Card</th>
-				<th>Tablets per Pack</th>
-				<th>Taken per Day</th>
-				<th>Daily dosage</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- Loop through drugs -->
-			<% for(let i = 0; i < drugs.length; i++) {%>
-			<tr>
-				<td><%= i + 1 %></td>
-				<td><%= drugs[i].name %></td>
-				<td><%= drugs[i].card %></td>
-				<td><%= drugs[i].pack %></td>
-				<td><%= drugs[i].perDay %></td>
-				<td><%= drugs[i].dosage %></td>
-				<td>
-					<a href="/update-drug?id=<%= drugs[i]._id%>">
-						<span class='fa fa-edit'></span>
-					</a>
-					<a class="delete" data-id=<%= drugs[i]._id%> ><!-- give each delete button a unique ID -->
-						<span class='fa fa-trash'></span>
-					</a>
-				</td>
-			</tr>
-			<% } %> <!--  End loop -->
-		</tbody>
-	</table>
+  <!-- Add Drug Button -->
+  <a href="/add-drug">
+    <button id="new">New Drug <i class="fas fa-pills"></i></button>
+  </a>
+
+  <!-- Drugs Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Drug Name</th>
+        <th>Tablets per Card</th>
+        <th>Tablets per Pack</th>
+        <th>Taken per Day</th>
+        <th>Dosage</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (drugs && drugs.length > 0) { %>
+        <% for (let i = 0; i < drugs.length; i++) { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><%= drugs[i].name %></td>
+            <td><%= drugs[i].card %></td>
+            <td><%= drugs[i].pack %></td>
+            <td><%= drugs[i].perDay %></td>
+            <td><%= drugs[i].dosage %></td>
+            <td>
+              <!-- Edit -->
+              <a href="/update-drug?id=<%= drugs[i]._id %>" title="Edit">
+                <span class="fa fa-edit"></span>
+              </a>
+
+              <!-- Delete (handled by main.js) -->
+              <a href="#" class="delete" data-id="<%= drugs[i]._id %>" title="Delete">
+                <span class="fa fa-trash"></span>
+              </a>
+            </td>
+          </tr>
+        <% } %>
+      <% } else { %>
+        <tr>
+          <td colspan="7" style="text-align:center;">No drugs found</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
 </main>
 <!-- End main section -->
-<!-- add footer -->
+
+<!-- include footer -->
 <%- include('includes/_footer') %>
-<!-- end footer
+
+<!-- Load main.js -->
+<script src="/js/main.js"></script>

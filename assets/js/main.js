@@ -1,66 +1,92 @@
-let url = location.host;//so it works locally and online
+// Lấy base URL (vd: http://localhost:3000)
+const baseURL = window.location.origin;
 
-$("table").rtResponsiveTables();//for the responsive tables plugin
-
-$("#add_drug").submit(function(event){//on a submit event on the element with id add_drug
-    alert($("#name").val() + " sent successfully!");//alert this in the browser
-})
-
-
-
-$("#update_drug").submit(function(event){// on clicking submit
-    event.preventDefault();//prevent default submit behaviour
-
-    //var unindexed_array = $("#update_drug");
-    var unindexed_array = $(this).serializeArray();//grab data from form
-    var data = {}
-
-    $.map(unindexed_array, function(n, i){//assign keys and values from form data
-        data[n['name']] = n['value']
-    })
-
-
-    var request = {//use a put API request to use data from above to replace what's on database
-    "url" : `https://${url}/api/drugs/${data.id}`,
-    "method" : "PUT",
-    "data" : data
+// Responsive table plugin (nếu có)
+if ($("table").length > 0 && $.fn.rtResponsiveTables) {
+  $("table").rtResponsiveTables();
 }
 
-$.ajax(request).done(function(response){
-    alert(data.name + " Updated Successfully!");
-		window.location.href = "/manage";//redirects to index after alert is closed
+// ============ ADD DRUG ============
+$("#add_drug").on("submit", function (event) {
+  event.preventDefault();
+
+  const formData = $(this).serializeArray();
+  const data = {};
+  $.map(formData, function (n) {
+    data[n.name] = n.value;
+  });
+
+  $.ajax({
+    url: `${baseURL}/api/drugs`,
+    method: "POST",
+    data: data,
+  })
+    .done(function (response) {
+      alert(`${data.name} added successfully!`);
+      window.location.href = "/manage";
     })
+    .fail(function (err) {
+      console.error("Add error:", err);
+      alert("Error adding drug: " + (err.responseJSON?.message || err.responseText));
+    });
+});
 
-})
+// ============ UPDATE DRUG ============
+$("#update_drug").on("submit", function (event) {
+  event.preventDefault();
 
-if(window.location.pathname == "/manage"){//since items are listed on manage
-    $ondelete = $("table tbody td a.delete"); //select the anchor with class delete
-    $ondelete.click(function(){//add click event listener
-        let id = $(this).attr("data-id") // pick the value from the data-id
+  const formData = $(this).serializeArray();
+  const data = {};
+  $.map(formData, function (n) {
+    data[n.name] = n.value;
+  });
 
-        let request = {//save API request in variable
-            "url" : `https://${url}/api/drugs/${id}`,
-            "method" : "DELETE"
-        }
-
-        if(confirm("Do you really want to delete this drug?")){// bring out confirm box
-            $.ajax(request).done(function(response){// if confirmed, send API request
-                alert("Drug deleted Successfully!");//show an alert that it's done
-                location.reload();//reload the page
-            })
-        }
-
+  $.ajax({
+    url: `${baseURL}/api/drugs/${data.id}`,
+    method: "PUT",
+    data: data,
+  })
+    .done(function (response) {
+      alert(`${data.name} updated successfully!`);
+      window.location.href = "/manage";
     })
+    .fail(function (err) {
+      console.error("Update error:", err);
+      alert("Error updating drug: " + (err.responseJSON?.message || err.responseText));
+    });
+});
+
+// ============ DELETE DRUG ============
+if (window.location.pathname === "/manage") {
+  $("table tbody").on("click", "a.delete", function (e) {
+    e.preventDefault();
+    const id = $(this).attr("data-id");
+
+    if (confirm("Do you really want to delete this drug?")) {
+      $.ajax({
+        url: `${baseURL}/api/drugs/${id}`,
+        method: "DELETE",
+      })
+        .done(function (response) {
+          alert(response.message || "Drug deleted successfully!");
+          location.reload();
+        })
+        .fail(function (err) {
+          console.error("Delete error:", err);
+          alert("Error deleting drug: " + (err.responseJSON?.message || err.responseText));
+        });
+    }
+  });
 }
 
-if(window.location.pathname == "/purchase"){
-//$("#purchase_table").hide();
+// ============ PURCHASE FUNCTION ============
+if (window.location.pathname === "/purchase") {
+  $("#drug_days").on("submit", function (event) {
+    event.preventDefault();
 
-$("#drug_days").submit(function(event){//on a submit event on the element with id add_drug
-    event.preventDefault();//prevent default submit behaviour
+    const days = +$("#days").val() || 30;
     $("#purchase_table").show();
-    days = +$("#days").val();
-    alert("Drugs for " + days + " days!");//alert this in the browser
-})
 
+    alert(`Drugs calculated for ${days} days!`);
+  });
 }

@@ -1,40 +1,54 @@
 <!-- add header -->
 <%- include('includes/_header') %>
 <!-- end header -->
+
 <!-- Main section -->
 <main id="main">
+  <h2>View Daily Drug Dosage</h2>
 
-	<h2>View Daily Drug Dosage</h2>
-	<div class="row">
-		<div class="col-lg-3 col-sm-12">
-			<p>
-				<img src="/images/pillorganizer.jpg" alt="" width="100%" height="auto"><br>This is how drugs are dispensed for daily use. The White container is for morning drugs, purple for afternoon and deep blue for evening drugs</p>
-			</div>
-			<div class="col-lg-9 col-sm-12">
-				<table>	
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Drug Name</th>
-							<th>Daily dosage</th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- Loop through drugs -->
-						<% for(let i = 0; i < drugs.length; i++) {%>
-						<tr>
-							<td><%= i + 1 %></td>
-							<td><%= drugs[i].name %></td>
-							<td><%= drugs[i].dosage %></td>
-						</tr>
-						<% } %> <!--  End loop -->
-					</tbody>
-				</table>
-			</div>
-		</div>
+  <div class="row">
+    <!-- Left column: description -->
+    <div class="col-lg-3 col-sm-12">
+      <p>
+        <img src="/images/pillorganizer.jpg" alt="Pill Organizer" width="100%" height="auto"><br>
+        This is how drugs are dispensed for daily use.<br>
+        <strong>White container</strong> → morning drugs,<br>
+        <strong>Purple</strong> → afternoon drugs,<br>
+        <strong>Deep blue</strong> → evening drugs.
+      </p>
+    </div>
 
-	</main>
-	<!-- End main section -->
-	<!-- add footer -->
-	<%- include('includes/_footer') %>
-	<!-- end footer-->
+    <!-- Right column: table -->
+    <div class="col-lg-9 col-sm-12">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Drug Name</th>
+            <th>Daily Dosage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (drugs && drugs.length > 0) { %>
+            <% for (let i = 0; i < drugs.length; i++) { %>
+              <tr>
+                <td><%= i + 1 %></td>
+                <td><%= drugs[i].name %></td>
+                <td><%= drugs[i].dosage %></td>
+              </tr>
+            <% } %>
+          <% } else { %>
+            <tr>
+              <td colspan="3" style="text-align:center;">No drugs found</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<!-- End main section -->
+
+<!-- add footer -->
+<%- include('includes/_footer') %>
+<!-- end footer -->
