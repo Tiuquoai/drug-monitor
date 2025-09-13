@@ -2,29 +2,37 @@ const mongoose = require('mongoose');
 
 let schema = new mongoose.Schema({
     name: {
-  type: String,
-  required: true
-},
-
-    dosage : {
-        type : String,// dosage would be a string
-        required: true,// dosage is a required property
+        type: String,
+        required: true,
+        trim: true // bỏ khoảng trắng thừa
+        // unique: true   // ⚠ nếu bạn muốn tên thuốc không trùng thì mới bật
     },
-    card : {
-        type: Number, // card would be a number
-        required: true
+    dosage: {
+        type: String,
+        required: true,
+        trim: true
     },
-    pack : {
-        type: Number,
-        required: true
-    },
-    perDay : {
+    card: {
         type: Number,
         required: true,
-        unique: true
+        min: 1
     },
-})
+    pack: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+    perDay: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 90 // giới hạn theo yêu cầu middleware
+        // ❌ KHÔNG để unique
+    }
+}, {
+    timestamps: true // tự động thêm createdAt & updatedAt
+});
 
-const DrugDB = mongoose.model('drugs', schema);//drugs specifies the collection name, database to use was specified in connection string
+const DrugDB = mongoose.model('drugs', schema);
 
 module.exports = DrugDB;

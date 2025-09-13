@@ -60,8 +60,42 @@
 </main>
 <!-- End main section -->
 
-<!-- Load main.js (handle update here instead of inline script) -->
-<script src="/js/main.js"></script>
+<!-- Script handle AJAX update -->
+<script>
+  document.getElementById("update_drug").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById("id").value;
+
+    const drugData = {
+      name: document.getElementById("name").value,
+      card: document.getElementById("card").value,
+      pack: document.getElementById("pack").value,
+      perDay: document.getElementById("perDay").value,
+      dosage: document.getElementById("dosage").value
+    };
+
+    try {
+      const res = await fetch(`/api/drugs/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(drugData)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Drug updated successfully!");
+        window.location.href = "/manage"; // quay lại Manage
+      } else {
+        alert("Error: " + (data.message || "Could not update drug"));
+      }
+    } catch (err) {
+      console.error("Error updating drug:", err);
+      alert("Something went wrong");
+    }
+  });
+</script>
 
 <!-- add footer -->
 <%- include('includes/_footer') %>
